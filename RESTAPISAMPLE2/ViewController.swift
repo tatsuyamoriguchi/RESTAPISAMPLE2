@@ -43,7 +43,18 @@ class ViewController: UIViewController {
             print("")
             print(json.Date)
             print("")
-            print(json.Countries.count)
+            print(json.Countries.first as Any)
+            
+            let countryToSearch = "Japan"
+            for country in json.Countries {
+                if country.Country == countryToSearch {
+                    print(country.Country)
+                    print("NewConfirmed: \(country.NewConfirmed)")
+                    print("NewDeatch: \(country.NewDeaths)")
+                }
+                
+            }
+        
             
         })
         task.resume()
