@@ -9,84 +9,116 @@
 import UIKit
 
 class ViewController: UIViewController {
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        let url = "https://api.sunrise-sunset.org/json?lat=36.7201600&lng=-4.4203400&formatted=1"
+        
+        let url = "https://api.covid19api.com/summary"
         getData(from: url)
-
     }
     
     private func getData(from url: String) {
-        
-        let task = URLSession.shared.dataTask(with: URL(string: url)!, completionHandler: { data, response, error in
+        let task = URLSession.shared.dataTask(with: URL(string: url)!, completionHandler: { data, response, error
+            in
             guard let data = data, error == nil else {
-                print("Something went wrong")
+                print("Somethign went wrong")
                 return
             }
+            
+            // Get and decode data
             var result: Response?
             do {
                 result = try JSONDecoder().decode(Response.self, from: data)
             } catch {
-                print("Failed to convert \(error.localizedDescription)")
+                print("Failed to convert \(error)")
+                
             }
-            
             guard let json = result else {
                 return
             }
+            print(json.Global)
+            print("")
+            print(json.Global.NewConfirmed)
+            print("")
+            print(json.Date)
+            print("")
+            print(json.Countries.count)
             
-//            print(json.status)
-//            print(json.results.sunrise)
-//            print(json.results.sunset)
-//            print(json.results.day_length)
-            
-            print(json.status)
-            print(json.results.sunrise)
-            print(json.results.sunset)
-            print(json.results.solar_noon)
-            print(json.results.sunrise)
-
         })
         task.resume()
     }
 }
 
 struct Response: Codable {
-    // What is Codable? Protcol programming?
-    // Protcol that Swift provides decodes data from REST API server
-    let results: MyResult
-    let status: String
+    let Global: MyResult
+    let Date: String
+    var Countries: [MyCountries]
 }
 
 struct MyResult: Codable {
-    let sunrise: String
-    let sunset: String
-    let solar_noon: String
-    let day_length: String
-    let civil_twilight_begin: String
-    let civil_twilight_end: String
-    let nautical_twilight_begin: String
-    let nautical_twilight_eng: String
-    let astronomical_twilight_begin: String
-    let astronomical_twilight_end: String
+    let NewConfirmed: Int
+    let TotalConfirmed: Int
+    let NewDeaths: Int
+    let TotalDeaths: Int
+    let NewRecovered: Int
+    let TotalRecovered: Int
+   
+
+}
+
+struct MyCountries: Codable {
+    let Country: String
+    let CountryCode: String
+    let Slug: String
+    let NewConfirmed: Int
+    let TotalConfirmed: Int
+    let NewDeaths: Int
+    let TotalDeaths: Int
+    let NewRecovered: Int
+    let TotalRecovered: Int
+    let Date: String
 }
 
 /*
- {
-   "results":
-   {
-     "sunrise":"7:27:02 AM",
-     "sunset":"5:05:55 PM",
-     "solar_noon":"12:16:28 PM",
-     "day_length":"9:38:53",
-     "civil_twilight_begin":"6:58:14 AM",
-     "civil_twilight_end":"5:34:43 PM",
-     "nautical_twilight_begin":"6:25:47 AM",
-     "nautical_twilight_end":"6:07:10 PM",
-     "astronomical_twilight_begin":"5:54:14 AM",
-     "astronomical_twilight_end":"6:38:43 PM"
-   },
-    "status":"OK"
+ {"Global":
+     {
+         "NewConfirmed":249767,
+         "TotalConfirmed":13804565,
+         "NewDeaths":5779,
+         "TotalDeaths":589895,
+         "NewRecovered":152273,
+         "TotalRecovered":7710874
+     },
+     "Countries":
+     [    {
+             "Country":"Afghanistan",
+             "CountryCode":"AF",
+             "Slug":"afghanistan",
+             "NewConfirmed":76,
+             "TotalConfirmed":35070,
+             "NewDeaths":19,
+             "TotalDeaths":1113,
+             "NewRecovered":368,
+             "TotalRecovered":22824,
+             "Date":"2020-07-17T19:48:11Z",
+             "Premium":{}
+         },
+         {
+             "Country":"Albania",
+             "CountryCode":"AL",
+             "Slug":"albania",
+             "NewConfirmed":99,
+             "TotalConfirmed":3851,
+             "NewDeaths":3,
+             "TotalDeaths":104,
+             "NewRecovered":46,
+             "TotalRecovered":2137,
+             "Date":"2020-07-17T19:48:11Z",
+             "Premium":{}
+         },
+     ],
+
+     "Date":"2020-07-17T19:48:11Z"
  }
- */
+*/
